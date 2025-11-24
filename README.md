@@ -5,27 +5,27 @@
   Manage your financial journey with smart insights, analytics & automation.
 </p>
 
----
-
 <p align="center">
-
-<!-- Badges -->
 <img src="https://img.shields.io/badge/Status-Active-brightgreen"/>
 <img src="https://img.shields.io/badge/Build-Vite-blue"/>
 <img src="https://img.shields.io/badge/React-18.0+-61dafb"/>
 <img src="https://img.shields.io/badge/TypeScript-5.0-3178c6"/>
 <img src="https://img.shields.io/badge/License-MIT-yellow"/>
-
 </p>
+
+---
+
+## 🌐 Live Demo
+
+🚀 **Experience SmartAI-Expense Live**:  
+**https://smart-ai-expense.vercel.app/**
 
 ---
 
 ## 📌 About the Project
 
-**SmartAI-Expense** is a modern AI-driven expense management application that helps users:
-track spending, split bills with friends, analyze financial behavior, learn financial
-discipline, and make smarter money decisions with help from an AI assistant.
-Built for simplicity, speed, and real-world usability.
+**SmartAI-Expense** is a modern AI-driven expense management application that helps users track spending, split bills with friends, analyze financial behavior, learn financial discipline, and make smarter money decisions with help from an AI assistant.  
+Built for **simplicity, speed, and real-world usability**.
 
 ---
 
@@ -36,9 +36,9 @@ Built for simplicity, speed, and real-world usability.
 - ➕ **Add Transactions** – clean and simple expense input system
 - 👥 **Split Bills** – divide shared bills easily with group tracking
 - 🤖 **AI Assistant** – smart money suggestions & Q/A on spending patterns
-- 📚 **Financial Learning Hub** – money tips to build budgeting skills
+- 📚 **Financial Learning Hub** – budgeting & money-saving tips
 - 🧠 **Smart Categorization** – auto-group expenses for clarity
-- 🎨 **Responsive Modern UI** – built with TailwindCSS & shadcn/ui
+- 🎨 **Modern Responsive UI** – TailwindCSS + shadcn/ui
 - ⚡ **Super Fast** – Vite + TypeScript for smooth performance
 
 ---
@@ -71,7 +71,7 @@ Built for simplicity, speed, and real-world usability.
 |------------|---------|
 | **React** | UI Framework |
 | **TypeScript** | Type safety & structure |
-| **Vite** | Modern build tooling |
+| **Vite** | Build tool |
 | **Tailwind CSS** | Styling |
 | **shadcn/ui** | UI Components |
 | **Node.js** | Runtime Environment |
