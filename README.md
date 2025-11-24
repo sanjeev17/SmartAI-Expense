@@ -46,22 +46,22 @@ Built for simplicity, speed, and real-world usability.
 ## 🖼 Screenshots
 
 ### 🏠 Dashboard
-<img src="./assets/screenshots/dashboard.png" width="800"/>
+<img src="https://github.com/sanjeev17/SmartAI-Expense/blob/main/dashboard.png" width="800"/>
 
 ### ➕ Add Transaction
-<img src="./assets/screenshots/add%20transaction.png" width="800"/>
+<img src="https://github.com/sanjeev17/SmartAI-Expense/blob/main/add%20transaction.png" width="800"/>
 
 ### 💸 Split Bills
-<img src="./assets/screenshots/split%20bills.png" width="800"/>
+<img src="https://github.com/sanjeev17/SmartAI-Expense/blob/main/split%20bills.png" width="800"/>
 
 ### 🤖 AI Financial Assistant
-<img src="./assets/screenshots/ai%20assistant.png" width="800"/>
+<img src="https://github.com/sanjeev17/SmartAI-Expense/blob/main/ai%20assistant.png" width="800"/>
 
 ### 📚 Financial Learning
-<img src="./assets/screenshots/financial%20learning.png" width="800"/>
+<img src="https://github.com/sanjeev17/SmartAI-Expense/blob/main/financial%20learning.png" width="800"/>
 
 ### 📊 Analytics
-<img src="./assets/screenshots/analytics.png" width="800"/>
+<img src="https://github.com/sanjeev17/SmartAI-Expense/blob/main/analytics.png" width="800"/>
 
 ---
 
