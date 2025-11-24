@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Transaction, getTransactions, saveTransaction, deleteTransaction, getBalance, getTotalByType } from "@/lib/storage";
+import { Transaction, getTransactions, saveTransaction, deleteTransaction, insertTransaction, getBalance, getTotalByType } from "@/lib/storage";
 
 export const useTransactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -8,11 +8,34 @@ export const useTransactions = () => {
   const [totalExpense, setTotalExpense] = useState(0);
 
   const loadData = () => {
-    const txns = getTransactions();
-    setTransactions(txns);
-    setBalance(getBalance());
-    setTotalIncome(getTotalByType("income"));
-    setTotalExpense(getTotalByType("expense"));
+    try {
+      const txns = getTransactions() || [];
+      setTransactions(Array.isArray(txns) ? txns : []);
+      try {
+        setBalance(getBalance());
+      } catch (err) {
+        console.error("Error computing balance:", err);
+        setBalance(0);
+      }
+      try {
+        setTotalIncome(getTotalByType("income"));
+      } catch (err) {
+        console.error("Error computing total income:", err);
+        setTotalIncome(0);
+      }
+      try {
+        setTotalExpense(getTotalByType("expense"));
+      } catch (err) {
+        console.error("Error computing total expense:", err);
+        setTotalExpense(0);
+      }
+    } catch (err) {
+      console.error("Error loading transactions:", err);
+      setTransactions([]);
+      setBalance(0);
+      setTotalIncome(0);
+      setTotalExpense(0);
+    }
   };
 
   useEffect(() => {
@@ -20,12 +43,32 @@ export const useTransactions = () => {
   }, []);
 
   const addTransaction = (transaction: Omit<Transaction, "id" | "createdAt">) => {
-    saveTransaction(transaction);
+    try {
+      saveTransaction(transaction);
+    } catch (err) {
+      console.error("Error saving transaction:", err);
+    }
     loadData();
   };
 
-  const removeTransaction = (id: string) => {
-    deleteTransaction(id);
+  const removeTransaction = (id: string): Transaction | null => {
+    try {
+      const deleted = deleteTransaction(id);
+      loadData();
+      return deleted;
+    } catch (err) {
+      console.error("Error deleting transaction:", err);
+      loadData();
+      return null;
+    }
+  };
+
+  const restoreTransaction = (transaction: Transaction) => {
+    try {
+      insertTransaction(transaction);
+    } catch (err) {
+      console.error("Error inserting transaction:", err);
+    }
     loadData();
   };
 
@@ -36,6 +79,7 @@ export const useTransactions = () => {
     totalExpense,
     addTransaction,
     removeTransaction,
+    restoreTransaction,
     refresh: loadData,
   };
 };

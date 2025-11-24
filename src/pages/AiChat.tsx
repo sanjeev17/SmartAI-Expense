@@ -3,7 +3,8 @@ import Navigation from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Mic, Bot, Sparkles } from "lucide-react";
+import { Send, Mic, Bot, Sparkles, MicOff } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
 import { useTransactions } from "@/hooks/useTransactions";
 import { getCategoryTotals } from "@/lib/storage";
 import { startOfMonth } from "date-fns";
@@ -24,6 +25,8 @@ const AiChat = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,6 +35,57 @@ const AiChat = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    // Setup SpeechRecognition if available
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      recognitionRef.current = null;
+      return;
+    }
+
+    const recog = new SpeechRecognition();
+    recog.lang = "en-IN"; // supports English (India) by default
+    recog.interimResults = true;
+    recog.maxAlternatives = 1;
+
+    recog.onstart = () => setIsListening(true);
+    recog.onend = () => setIsListening(false);
+
+    recog.onresult = (event: any) => {
+      let interim = "";
+      let finalTranscript = "";
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const res = event.results[i];
+        if (res.isFinal) {
+          finalTranscript += res[0].transcript;
+        } else {
+          interim += res[0].transcript;
+        }
+      }
+      // update input with interim + final
+      setInput((prev) => (prev ? prev + " " : "") + finalTranscript + interim);
+      // if final, optionally send automatically
+      if (finalTranscript) {
+        // auto-send after a short delay
+        setTimeout(() => {
+          if (finalTranscript) {
+            // do nothing here; user can press send if desired
+          }
+        }, 300);
+      }
+    };
+
+    recognitionRef.current = recog;
+
+    return () => {
+      try {
+        recog.onresult = null;
+        recog.onend = null;
+        recog.onstart = null;
+      } catch {}
+    };
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -165,8 +219,34 @@ const AiChat = () => {
                 className="flex-1"
                 disabled={isTyping}
               />
-              <Button variant="outline" size="icon" className="shrink-0">
-                <Mic className="w-5 h-5" />
+              <Button
+                variant={isListening ? "destructive" : "outline"}
+                size="icon"
+                className="shrink-0"
+                onClick={() => {
+                  const recog = recognitionRef.current;
+                  if (!recog) {
+                    toast({ title: "Voice not supported", description: "Your browser does not support speech recognition." });
+                    return;
+                  }
+                  try {
+                    if (isListening) {
+                      recog.stop();
+                    } else {
+                      setInput("");
+                      recog.start();
+                    }
+                  } catch (err) {
+                    // fallback toggle
+                    if (isListening) {
+                      setIsListening(false);
+                    } else {
+                      setIsListening(true);
+                    }
+                  }
+                }}
+              >
+                {isListening ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
               </Button>
               <Button
                 size="icon"

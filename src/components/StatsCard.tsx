@@ -9,6 +9,7 @@ interface StatsCardProps {
   icon: LucideIcon;
   gradient: string;
   delay?: number;
+  onClick?: () => void;
 }
 
 export const StatsCard = ({
@@ -19,10 +20,14 @@ export const StatsCard = ({
   icon: Icon,
   gradient,
   delay = 0,
+  onClick,
 }: StatsCardProps) => {
   return (
     <Card
-      className="p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-scale-in border-border/50 backdrop-blur-sm bg-card/50 group"
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      className={`p-6 hover:shadow-lg transition-all duration-300 ${onClick ? "cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring" : ""} hover:-translate-y-1 animate-scale-in border-border/50 backdrop-blur-sm bg-card/50 group`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-start justify-between">

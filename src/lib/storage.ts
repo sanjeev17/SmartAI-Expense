@@ -21,11 +21,24 @@ const STORAGE_KEYS = {
 };
 
 // Transactions
+const generateId = (): string => {
+  try {
+    // prefer crypto.randomUUID when available
+    // @ts-ignore
+    if (typeof crypto !== "undefined" && typeof (crypto as any).randomUUID === "function") {
+      // @ts-ignore
+      return (crypto as any).randomUUID();
+    }
+  } catch {}
+  return `${Date.now()}-${Math.floor(Math.random() * 1e9)}`;
+};
+
 export const getTransactions = (): Transaction[] => {
   try {
     const data = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
     return data ? JSON.parse(data) : [];
-  } catch {
+  } catch (err) {
+    console.error("getTransactions error:", err);
     return [];
   }
 };
@@ -34,24 +47,62 @@ export const saveTransaction = (transaction: Omit<Transaction, "id" | "createdAt
   const transactions = getTransactions();
   const newTransaction: Transaction = {
     ...transaction,
-    id: crypto.randomUUID(),
+    id: generateId(),
     createdAt: new Date().toISOString(),
   };
   transactions.unshift(newTransaction);
-  localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+  try {
+    localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+  } catch (err) {
+    console.error("saveTransaction error:", err);
+  }
   return newTransaction;
 };
 
-export const deleteTransaction = (id: string): void => {
-  const transactions = getTransactions().filter((t) => t.id !== id);
-  localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+export const deleteTransaction = (id: string): Transaction | null => {
+  try {
+    const transactions = getTransactions();
+    const idx = transactions.findIndex((t) => t.id === id);
+    if (idx === -1) return null;
+    const [deleted] = transactions.splice(idx, 1);
+    try {
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+    } catch (err) {
+      console.error("deleteTransaction setItem error:", err);
+    }
+    return deleted;
+  } catch (err) {
+    console.error("deleteTransaction error:", err);
+    return null;
+  }
+};
+
+// Insert a full transaction object (used for undo/restore)
+export const insertTransaction = (transaction: Transaction): void => {
+  try {
+    const transactions = getTransactions();
+    transactions.unshift(transaction);
+    try {
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+    } catch (err) {
+      console.error("insertTransaction setItem error:", err);
+    }
+  } catch (err) {
+    console.error("insertTransaction error:", err);
+  }
 };
 
 export const updateTransaction = (id: string, updates: Partial<Transaction>): void => {
-  const transactions = getTransactions().map((t) =>
-    t.id === id ? { ...t, ...updates } : t
-  );
-  localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+  try {
+    const transactions = getTransactions().map((t) => (t.id === id ? { ...t, ...updates } : t));
+    try {
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(transactions));
+    } catch (err) {
+      console.error("updateTransaction setItem error:", err);
+    }
+  } catch (err) {
+    console.error("updateTransaction error:", err);
+  }
 };
 
 // Analytics helpers
